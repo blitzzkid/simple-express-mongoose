@@ -1,11 +1,11 @@
-const mongoose = require("../db");
+const mongoose = require("mongoose");
 
 const kittySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     index: true,
-    // unique: true,
+    unique: true,
     minlength: 3
   },
   age: { type: Number, min: 0, max: 20 },
