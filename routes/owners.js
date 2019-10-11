@@ -13,28 +13,27 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/secret", async (req, res, next) => {
+const protectedRoutes = (req, res, next) => {
   try {
     if (!req.cookies.token) {
       throw new Error();
     }
-    const user = jwt.verify(req.cookies.token, "secret");
-    res.send(`Hello ${user.name}`);
-  } catch (error) {
-    error.status = 401;
+    req.user = jwt.verify(req.cookies.token, "secret");
     next();
+  } catch (error) {
+    res.status(401).end();
   }
-});
+};
 
-router.get("/:name", async (req, res, next) => {
+router.get("/:name", protectedRoutes, async (req, res, next) => {
   try {
     const ownerFirstName = req.params.name;
     const regex = new RegExp(ownerFirstName, "gi");
     const owners = await Owner.find({ firstName: regex });
-    const person = {
-      fullName: `${owners[0].salutation} ${owners[0].firstName} ${owners[0].lastName}`
-    };
-    res.send(person);
+    // const person = {
+    //   fullName: `${owners[0].salutation} ${owners[0].firstName} ${owners[0].lastName}`
+    // };
+    res.send(owners);
   } catch (err) {
     next(err);
   }
@@ -60,7 +59,7 @@ router.post("/login", async (req, res, next) => {
     if (!result) {
       throw new Error("Wrong password");
     }
-    const token = jwt.sign({ name: owner.username }, "secret");
+    const token = jwt.verify({ name: owner.username }, "secret");
     res.cookie("token", token);
     res.send(owner);
   } catch (err) {
