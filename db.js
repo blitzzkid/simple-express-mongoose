@@ -4,7 +4,7 @@ const dbName = "test";
 mongoose.connect(`mongodb://localhost/${dbName}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  // useCreateIndex: true
+  useCreateIndex: true
 });
 
 const db = mongoose.connection;

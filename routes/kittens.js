@@ -28,7 +28,7 @@ router.post("/new", async (req, res, next) => {
     const fluffy = new Kitten(newKitty);
     await Kitten.init();
     const newKitten = await fluffy.save();
-    res.send(`Successfully created a new kitten ${newKitten.name}`);
+    res.send(newKitten);
   } catch (err) {
     console.error(err);
     if (err.name === "MongoError" && err.code === 11000) {
@@ -46,7 +46,7 @@ router.put("/:name", async (req, res, next) => {
     const kittenToUpdateName = req.params.name;
     const regex = new RegExp(kittenToUpdateName, "gi");
     const kittenToUpdateDetails = req.body.name;
-    const newKitten = await Kitten.findOneAndUpdate(
+    const newKitten = await Kitten.findOneAndReplace(
       { name: regex },
       { name: kittenToUpdateDetails },
       { new: true }
@@ -61,7 +61,7 @@ router.delete("/delete", async (req, res, next) => {
   try {
     const kittenToDelete = req.params.body;
     await Kitten.deleteOne(kittenToDelete);
-    res.send(`Successfully deleted kitten `);
+    res.send(`Successfully deleted kitten`);
   } catch (err) {
     next(err);
   }

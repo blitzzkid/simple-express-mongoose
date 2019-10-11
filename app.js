@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
-require('./db')
+const cookieParser = require("cookie-parser");
 
-// Add body parser
+if (app.get("env") !== "test") {
+  require("./db");
+}
+app.use(cookieParser());
 app.use(express.json());
 
-// Define routes
 const Kitten = require("./routes/kittens");
 app.use("/kittens", Kitten);
 

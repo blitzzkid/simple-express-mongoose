@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Owner = require("../models/Owner");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -8,6 +10,19 @@ router.get("/", async (req, res, next) => {
     res.send(owner);
   } catch (err) {
     next(err);
+  }
+});
+
+router.get("/secret", async (req, res, next) => {
+  try {
+    if (!req.cookies.token) {
+      throw new Error();
+    }
+    const user = jwt.verify(req.cookies.token, "secret");
+    res.send(`Hello ${user.name}`);
+  } catch (error) {
+    error.status = 401;
+    next();
   }
 });
 
@@ -28,12 +43,30 @@ router.get("/:name", async (req, res, next) => {
 router.post("/new", async (req, res, next) => {
   try {
     const newOwner = req.body;
-    // Create a new document
     const owner = new Owner(newOwner);
-    // Save document to database
+    await Owner.init();
     const savedOwner = await owner.save();
-    res.send(`Successfully created a new owner ${savedOwner.firstName}`);
+    res.send(savedOwner);
   } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/login", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const owner = await Owner.findOne({ username });
+    const result = await bcrypt.compare(password, owner.password);
+    if (!result) {
+      throw new Error("Wrong password");
+    }
+    const token = jwt.sign({ name: owner.username }, "secret");
+    res.cookie("token", token);
+    res.send(owner);
+  } catch (err) {
+    if (err.message === "Wrong password") {
+      err.status = 400;
+    }
     next(err);
   }
 });
