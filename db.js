@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const dbName = "test";
+const dbName = "kittens-db";
 
 let dbUrl;
 if (process.env.NODE_ENV === "development") {
