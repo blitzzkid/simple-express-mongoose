@@ -59,7 +59,7 @@ router.post("/login", async (req, res, next) => {
     if (!result) {
       throw new Error("Wrong password");
     }
-    const token = jwt.verify({ name: owner.username }, "secret");
+    const token = jwt.sign({ name: owner.username }, "secret");
     res.cookie("token", token);
     res.send(owner);
   } catch (err) {
@@ -68,6 +68,10 @@ router.post("/login", async (req, res, next) => {
     }
     next(err);
   }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token").send("You are now logged out!");
 });
 
 module.exports = router;
