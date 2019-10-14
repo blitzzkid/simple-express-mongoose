@@ -70,14 +70,14 @@ describe("Testing for the kittens on a separate in-memory server", () => {
         .expect(() => expect.objectContaining(newKitten));
     });
   });
-  describe("[DEL] should delete one kitten", () => {
-    it("Should delete one kitten", async () => {
-      const kittenToDelete = { name: "Fluffier", age: 6, sex: "female" };
-      return request(app)
-        .delete("/kittens/delete")
-        .send(kittenToDelete)
-        .expect(200)
-        .expect("Successfully deleted kitten");
-    });
-  });
+  // describe("[DEL] should delete one kitten", () => {
+  //   it("Should delete one kitten", async () => {
+  //     const kittenToDelete = { name: "Fluffier", age: 6, sex: "female" };
+  //     return request(app)
+  //       .delete("/kittens/delete")
+  //       .send(kittenToDelete)
+  //       .expect(200)
+  //       .expect("Successfully deleted kitten");
+  //   });
+  // });
 });

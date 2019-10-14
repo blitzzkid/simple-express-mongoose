@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Kitten = require("../models/Kitten");
+const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -57,12 +58,25 @@ router.put("/:name", async (req, res, next) => {
   }
 });
 
-router.delete("/delete", async (req, res, next) => {
+const protectedRoutes = (req, res, next) => {
   try {
-    const kittenToDelete = req.params.body;
-    await Kitten.deleteOne(kittenToDelete);
+    if (!req.cookies.token) {
+      throw new Error("You are not authorized");
+    }
+    req.user = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY);
+    next();
+  } catch (error) {
+    res.status(401).end();
+  }
+};
+
+router.delete("/delete/:id", protectedRoutes, async (req, res, next) => {
+  try {
+    const kittenToDelete = req.params.id;
+    await Kitten.findByIdAndDelete(kittenToDelete);
     res.send(`Successfully deleted kitten`);
   } catch (err) {
+    err.status = 400;
     next(err);
   }
 });

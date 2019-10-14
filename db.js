@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
 const dbName = "test";
 
-mongoose.connect(`mongodb://localhost/${dbName}`, {
+let dbUrl;
+if (process.env.NODE_ENV === "development") {
+  dbUrl = `mongodb://localhost/${dbName}`;
+}
+
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true
