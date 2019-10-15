@@ -1,4 +1,3 @@
-
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
@@ -10,7 +9,7 @@ if (app.get("env") !== "test") {
 
 const corsOptions = {
   credentials: true,
-  origin: "http://localhost:3000",
+  origin: "https://kitten-home.herokuapp.com/",
   allowedHeaders: "content-type"
 };
 
