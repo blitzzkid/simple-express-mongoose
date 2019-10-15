@@ -9,7 +9,7 @@ if (app.get("env") !== "test") {
 
 const corsOptions = {
   credentials: true,
-  origin: "https://kitten-home.herokuapp.com/",
+  origin: "https://kitten-shelter.netlify.com/",
   allowedHeaders: "content-type"
 };
 
